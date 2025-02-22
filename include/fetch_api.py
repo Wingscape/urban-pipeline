@@ -1,7 +1,19 @@
 import requests
 import json
 
-def fetch_data_from_api(api_url, params=None, headers=None):
+def fetch_data_from_api(api_url: str, params=None, headers=None) -> any:
+    """Fetches data from the specified API URL.
+
+    Args:
+        api_url: The URL of the API endpoint.
+        params (dict, optional): The query parameters to be sent with the request. Defaults to None.
+        headers (dict, optional): The headers to be sent with the request. Defaults to None.
+    Returns:
+        any: The JSON response from the API.
+    Raises:
+        Exception: If the API is not available or the request fails.
+        Exception: If the API response is not in JSON format.
+    """
     try:
         response = requests.get(api_url, params=params, headers=headers)
         response.raise_for_status()
@@ -14,7 +26,15 @@ def fetch_data_from_api(api_url, params=None, headers=None):
     
     return response.json()
 
-def set_api_to_query(response: list, data_source: list) -> str:
+def set_api_to_query(response: any, data_source: dict) -> str:
+    """Generates a SQL query to insert API response data into a database.
+
+    Args:
+        response: The API response data to be inserted.
+        data_source: A dictionary containing the source, type, and context of the data.
+    Returns:
+        str: A SQL query string for inserting the data into the database.
+    """
     response_replace_none = json.dumps(response).replace('None', 'NULL')
 
     raw_query = """
