@@ -10,3 +10,6 @@ __pycache__/
 target/
 dbt_packages/
 logs/
+
+# ignore temp sql files
+*temp.sql
