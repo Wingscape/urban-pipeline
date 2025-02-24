@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: raw
+    description: raw data source extracted from external sources including World Bank and OpenAQ resides in Snowflake.
+    database: raw
+    schema: public
+    tables:
+      - name: data_source
+        description: table to stores the data comes from external sources as is.
+        columns:
+          - name: id
+            description: integer primary key incremented automatically as the data comes in.
+            tests:
+              - unique
+              - not_null
+          - name: raw_data
+            description: JSON raw data.
+            tests:
+              - not_null
