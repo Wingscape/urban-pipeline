@@ -1,17 +1,17 @@
-WITH source AS (
+WITH data_source AS (
     SELECT * FROM {{ source('raw', 'data_source') }}
 ),
 
-renamed AS (
+raw_world_bank AS (
     SELECT
         id AS raw_id,
-        name AS raw_name,
+        name AS raw_source_name,
         type AS raw_type,
         context,
         raw_data,
         pull_date,
         pull_timestamp
-    FROM source WHERE name = 'world bank' AND pull_date = CURRENT_DATE
+    FROM data_source WHERE name = 'world bank' AND pull_date = CURRENT_DATE
 )
 
-SELECT * FROM renamed
+SELECT * FROM raw_world_bank
