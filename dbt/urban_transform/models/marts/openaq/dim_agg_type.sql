@@ -1,7 +1,8 @@
 {{ 
     config(
         materialized='incremental',
-        unique_key='agg_type_key'
+        unique_key='agg_type_key',
+        on_schema_change='fail'
     )
 }}
 

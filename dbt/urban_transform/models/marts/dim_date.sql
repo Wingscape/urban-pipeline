@@ -1,7 +1,8 @@
 {{ 
     config(
         materialized='incremental',
-        unique_key='date_key'
+        unique_key='date_key',
+        on_schema_change='fail'
     )     
 }}
 

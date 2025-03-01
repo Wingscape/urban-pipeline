@@ -1,7 +1,8 @@
 {{ 
     config(
         materialized='incremental',
-        unique_key='source_key'
+        unique_key='source_key',
+        on_schema_change='fail'
     )
 }}
 

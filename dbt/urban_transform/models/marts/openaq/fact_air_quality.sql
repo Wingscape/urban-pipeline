@@ -12,8 +12,8 @@ fact_air AS (
         {{ dbt_utils.generate_surrogate_key(["'indonesia'", "'jakarta'"]) }} AS location_key,
         {{ dbt_utils.generate_surrogate_key(["'pm25'", "'µg/m³'"]) }} AS parameter_key,
         {{ dbt_utils.generate_surrogate_key(['key']) }} AS agg_type_key,
-        value AS agg_value,
-        air_value
+        CAST(value AS FLOAT) AS agg_value,
+        CAST(air_value AS FLOAT) AS air_value
     FROM fetched_openaq
 )
 

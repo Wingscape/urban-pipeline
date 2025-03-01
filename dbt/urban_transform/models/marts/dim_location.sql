@@ -1,7 +1,8 @@
 {{ 
     config(
         materialized='incremental',
-        unique_key='location_key'
+        unique_key='location_key',
+        on_schema_change='fail'
     )
 }}
 

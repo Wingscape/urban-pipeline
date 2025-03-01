@@ -1,0 +1,71 @@
+models:
+  - name: fact_urban_expansion
+    description: This model aggregates the urban expansion data from the World Bank API.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: urban_key
+        description: The unique identifier for the urban expansion data.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+      
+      - name: date_key
+        description: The unique identifier for the date.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_date')
+            to_columns: [date_key]
+
+      - name: source_key
+        description: The unique identifier for the source.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_source')
+            to_columns: [source_key]
+
+      - name: location_key
+        description: The unique identifier for the location.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_location')
+            to_columns: [location_key]
+      
+      - name: total_population
+        description: The total population of the location.
+        data_type: integer
+
+      - name: urban_population
+        description: The urban population of the location.
+        data_type: integer
+
+      - name: rural_population
+        description: The rural population of the location.
+        data_type: integer
+
+      - name: largest_city_population
+        description: The population of the largest city in the location.
+        data_type: integer
+
+      - name: urban_population_percent
+        description: The percentage of the population that is urban.
+        data_type: float
+
+      - name: rural_population_percent
+        description: The percentage of the population that is rural.
+        data_type: float
+
+      - name: largest_city_population_percent
+        description: The percentage of the population that lives in the largest city.
+        data_type: float
+
+      - name: air_pollution_pm25
+        description: The air pollution(pm25) in the location.
+        data_type: float

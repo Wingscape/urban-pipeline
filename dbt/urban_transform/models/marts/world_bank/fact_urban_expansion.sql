@@ -10,14 +10,14 @@ fact_urban AS (
         {{ dbt_utils.generate_surrogate_key(['raw_date::string', "'1'", "'1'"]) }} AS date_key,
         {{ dbt_utils.generate_surrogate_key(["'world bank'"]) }} AS source_key,
         {{ dbt_utils.generate_surrogate_key(["'indonesia'", "'jakarta'"]) }} AS location_key,
-        "'total population'" AS total_population,
-        "'total urban population'" AS urban_population,
-        "'total rural population'" AS rural_population,
-        "'largest city population'" AS largest_city_population,
-        "'urban population percentage'" AS urban_population_percent,
-        "'rural population percentage'" AS rural_population_percent,
-        "'largest city population percentage'" AS largest_city_population_percent,
-        "'air pollution mean annual exposure'" AS air_pollution_pm25
+        CAST("'total population'" AS INTEGER) AS total_population,
+        CAST("'total urban population'" AS INTEGER) AS urban_population,
+        CAST("'total rural population'" AS INTEGER) AS rural_population,
+        CAST("'largest city population'" AS INTEGER) AS largest_city_population,
+        CAST("'urban population percentage'" AS FLOAT) AS urban_population_percent,
+        CAST("'rural population percentage'" AS FLOAT) AS rural_population_percent,
+        CAST("'largest city population percentage'" AS FLOAT) AS largest_city_population_percent,
+        CAST("'air pollution mean annual exposure'" AS FLOAT) AS air_pollution_pm25
     FROM (
         SELECT 
             raw_flatten.value:date AS raw_date,

@@ -1,0 +1,69 @@
+models:
+  - name: dim_date
+    description: The date dimension.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: date_key
+        description: The unique identifier for the date.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+
+      - name: year
+        description: The year of the date.
+        data_type: integer
+      
+      - name: month
+        description: The month of the date.
+        data_type: integer
+
+      - name: day
+        description: The day of the date.
+        data_type: integer
+
+  - name: dim_source
+    description: The source dimension.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: source_key
+        description: The unique identifier for the source.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+
+      - name: name
+        description: The name of the source.
+        data_type: varchar(100)
+
+  - name: dim_location
+    description: The location dimension.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: location_key
+        description: The unique identifier for the location.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+
+      - name: country
+        description: The country of the location.
+        data_type: varchar(100)
+      
+      - name: capital_city
+        description: The city of the location.
+        data_type: varchar(100)
