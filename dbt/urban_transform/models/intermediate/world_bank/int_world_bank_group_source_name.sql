@@ -1,5 +1,3 @@
-{{ config(materialized='ephemeral') }}
-
 WITH raw_world_bank AS (
     SELECT * FROM {{ ref('stg_raw__world_banks') }}
 ),

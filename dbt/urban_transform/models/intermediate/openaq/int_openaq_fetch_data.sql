@@ -1,5 +1,3 @@
-{{ config(materialized='ephemeral') }}
-
 WITH raw_openaq AS (
     SELECT * FROM {{ ref('stg_raw__openaqs') }}
 ),
