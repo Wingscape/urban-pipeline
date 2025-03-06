@@ -17,9 +17,9 @@ fiscal_periods AS (
 selected_dates AS (
     SELECT
         {{ dbt_utils.generate_surrogate_key(['d.year_number', 'd.month_of_year', 'd.day_of_month']) }} AS date_key,
-        d.year_number AS year,
-        d.month_of_year AS month,
-        d.day_of_month AS day
+        CAST(d.year_number AS INTEGER) AS year,
+        CAST(d.month_of_year AS INTEGER) AS month,
+        CAST(d.day_of_month AS INTEGER) AS day
     FROM date_dimension AS d
     LEFT JOIN fiscal_periods AS fp
     ON d.date_day = fp.date_day

@@ -4,6 +4,8 @@ from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator, 
 from airflow.models import Variable
 from include.fetch_api import fetch_data_from_api, set_api_to_query
 from include.constant import OPENAQ_TEMP_FILENAME, OPENAQ_SOURCES, LOGGING_FORMAT, LOGGING_DATE_FORMAT
+from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig, RenderConfig
 import logging
 import time
 import os
@@ -22,6 +24,28 @@ def openaq_to_raw():
     2. store_raw_data: Executes an SQL query to store the fetched data in the 'raw' database.
     3. raw_quality_check: Performs a quality check on the stored data to ensure no null values in the 'raw_data' column.
     """
+    dbt_project_path = '{0}/dbt/urban_transform'.format(os.environ['AIRFLOW_HOME'])
+    dbt_executable_path = '{0}/dbt_env/bin/dbt'.format(os.environ['AIRFLOW_HOME'])
+
+    profile_config = ProfileConfig(
+        profile_name='urban_profile',
+        target_name='urban',
+        profile_mapping=SnowflakeUserPasswordProfileMapping(
+            conn_id='urban_snowflake',
+            profile_args={
+                'database': 'urban',
+                'schema': 'public'
+            }))
+
+    execution_config = ExecutionConfig(dbt_executable_path=dbt_executable_path)
+    project_config = ProjectConfig(dbt_project_path=dbt_project_path)
+
+    dimension_render_config = RenderConfig(select=['+dim_location', '+dim_source', '+dim_air_parameter', '+int_openaq_fetch_data', 'dim_agg_type'],
+                                           dbt_executable_path=dbt_executable_path)
+    
+    fact_render_config = RenderConfig(select=['fact_air_quality'],
+                                      dbt_executable_path=dbt_executable_path)
+    
     @task
     def get_raw_openaq(seconds_delayed: int = 1, api_pause_delayed: int = 5):
         """Fetches data from the OpenAQ API and writes it to a temporary file.
@@ -38,6 +62,10 @@ def openaq_to_raw():
             for index, data in enumerate(OPENAQ_SOURCES):
                 logging.info('Fetching data from OpenAQ API: {0}'.format(data['context']))
 
+                # If the data isn't currently available for test, tweak the date range to fetch the certain time period
+                # data['params']['datetime_from'] = '2025-02-01'
+                # data['params']['datetime_to'] = '2025-02-02'
+                
                 data['params']['datetime_from'] = yesterday_date
                 data['params']['datetime_to'] = today_date
                 data['headers']['X-API-Key'] = openaq_api_key
@@ -65,8 +93,24 @@ def openaq_to_raw():
         database='raw',
         table='raw.public.data_source',
         column_mapping={'raw_data': {'null_check': {'equal_to': 0}}})
+    
+    dimension_transform = DbtTaskGroup(
+        group_id='openaq_dimension',
+        project_config=project_config,
+        profile_config=profile_config,
+        execution_config=execution_config,
+        render_config=dimension_render_config,
+        operator_args={'install_deps': True})
+    
+    fact_transform = DbtTaskGroup(
+        group_id='openaq_fact',
+        project_config=project_config,
+        profile_config=profile_config,
+        execution_config=execution_config,
+        render_config=fact_render_config,
+        operator_args={'install_deps': True})
         
-    get_raw_openaq() >> store_raw_data >> raw_quality_check
+    get_raw_openaq() >> store_raw_data >> raw_quality_check >> dimension_transform >> fact_transform
 
 logging.basicConfig(
     format=LOGGING_FORMAT,
