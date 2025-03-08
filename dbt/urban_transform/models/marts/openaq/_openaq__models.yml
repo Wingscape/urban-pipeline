@@ -1,0 +1,105 @@
+models:
+  - name: fact_air_quality
+    description: This model aggregates the air quality data from the OpenAQ API.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: air_key
+        description: The unique identifier for the air quality data.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+      
+      - name: date_key
+        description: The unique identifier for the date.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_date')
+            to_columns: [date_key]
+
+      - name: source_key
+        description: The unique identifier for the source.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_source')
+            to_columns: [source_key]
+
+      - name: location_key
+        description: The unique identifier for the location.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_location')
+            to_columns: [location_key]
+
+      - name: parameter_key
+        description: The unique identifier for the parameter.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_air_parameter')
+            to_columns: [parameter_key]
+
+      - name: agg_type_key
+        description: The unique identifier for the aggregation type.
+        data_type: varchar(33)
+        constraints:
+          - type: foreign_key
+            to: ref('dim_agg_type')
+            to_columns: [agg_type_key]
+      
+      - name: agg_value
+        description: The aggregated value of the air quality data.
+        data_type: float
+
+      - name: air_value
+        description: The value of the air quality data.
+        data_type: float
+
+  - name: dim_agg_type
+    description: The aggregation type dimension.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: agg_type_key
+        description: The unique identifier for the aggregation type.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+
+      - name: name
+        description: The name of the aggregation type.
+        data_type: varchar(50)
+
+  - name: dim_air_parameter
+    description: The air parameter dimension.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: parameter_key
+        description: The unique identifier for the parameter.
+        data_type: varchar(33)
+        constraints:
+          - type: primary_key
+          - type: not_null
+        tests:
+          - unique
+
+      - name: name
+        description: The name of the parameter.
+        data_type: varchar(50)
+
+      - name: units
+        description: The units of the parameter.
+        data_type: varchar(50)

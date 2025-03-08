@@ -1,0 +1,28 @@
+name: 'urban_transform'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'urban_transform'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+# directories to be removed by `dbt clean`
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+models:
+  urban_transform:
+    staging:
+      +materalized: view
+    intermediate:
+      +materialized: ephemeral
